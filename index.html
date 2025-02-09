@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HYPER CLICKING!!</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: black; font-family: 'Arial', sans-serif; display: flex; justify-content: center; align-items: center; flex-direction: column; }
+        .space { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+        .star { position: absolute; border-radius: 50%; background-color: white; opacity: 0.4; animation: twinkle 1.5s infinite ease-in-out; }
+        @keyframes twinkle { 0% { opacity: 0.3; } 50% { opacity: 1; } 100% { opacity: 0.3; } }
+
+        h1, h2, h3, h4, h5, h6 { color: green; text-align: center; }
+        .container { text-align: center; color: white; z-index: 2; display: none; }
+        .screen { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.8); padding: 2rem; border-radius: 15px; border: 2px solid #00ff00; text-align: center; }
+        
+        button { padding: 5.6px 12.5px; font-size: 0.85em; background: #00ff00; border: none; border-radius: 24px; color: black; cursor: pointer; margin: 10px; transition: 0.3s; box-shadow: 0 0 12px #00ff00; width: 40%; }
+        button:hover { transform: scale(1.1); box-shadow: 0 0 20px #00ff00; }
+        
+        #clickButton { width: auto; } /* HYPER CLICKs !! button remains unchanged */
+
+        .score-container { position: absolute; top: 6px; right: 16.4px; text-align: right; color: white; }
+        .timer-container { position: absolute; top: 6px; left: 16.4px; font-size: 1.5em; color: green; }
+
+        .world-rankings { position: absolute; bottom: 6px; width: 100%; text-align: center; color: white; }
+        #worldRankingsModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.9); color: white; padding: 2rem; border-radius: 12px; border: 2px solid #00ff00; z-index: 3; width: 80%; height: 80%; overflow-y: scroll; }
+        #worldRankingsModal ol { list-style-type: none; padding: 0; margin: 0; }
+        #worldRankingsModal li { padding: 6px; }
+
+        #hidden-text {
+            display: none;
+            position: absolute;
+            top: 7.3%;
+            left: 22%;
+            transform: translate(-50%, -50%);
+            z-index: 999;
+            font-size: 6rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #00ff00, #00ffff, #00ff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textReveal 2s infinite, shake 0.5s infinite;
+        }
+
+        @keyframes textReveal {
+            0% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.8; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%); }
+            25% { transform: translate(-50%, -50%) translateX(-10px); }
+            75% { transform: translate(-50%, -50%) translateX(10px); }
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2.5px;
+            height: 2.5px;
+            background: white;
+            border-radius: 50%;
+            animation: float 3s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) translateX(0); opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(calc(-50vw + 100px)); opacity: 0; }
+        }
+
+        .screen input {
+            width: 80%;
+            padding: 8px;
+            margin: 8px 0;
+            border: 2px solid #00ff00;
+            background: black;
+            color: #00ff00;
+            border-radius: 5px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .screen input::placeholder {
+            color: rgba(0, 255, 0, 0.6);
+        }
+
+        #signInButton {
+            width: 85%;
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="space"></div>
+    <div class="particles"></div>
+    <div id="hidden-text">ALIAN</div>
+
+    <!-- Sign-In Screen -->
+    <div class="screen" id="signInScreen">
+        <h6>showing password is wrong, in this time change your name</h6>
+        <h6>don't forgot password</h6>
+        <h5>Sign In/Log in to Play</h5>
+        <input type="text" id="name" placeholder="Full Name">
+        <input type="password" id="password" placeholder="Password">
+        <button id="signInButton">Sign In/Log in</button>
+    </div>
+
+    <!-- Game Start Screen -->
+    <div class="screen" id="startScreen" style="display: none;">
+        <h5>Welcome, <span id="playerName"></span></h5>
+        <button id="playButton">START CLICKING</button>
+        <button id="viewTopScoresButton">View Top 100 Scores</button>
+    </div>
+
+    <!-- Game Container -->
+    <div class="container" id="gameContainer">
+        <div class="timer-container">Time: <span id="timerDisplay">0</span></div>
+        <div class="score-container">
+            <h6>Player: <span id="currentUser"></span></h6>
+            <h6>Personal Best: <span id="highScore">0</span></h6>
+        </div>
+        
+        <h4>Level: <span id="level">1</span></h4>
+        <button id="clickButton">HYPER CLICKs !!</button>
+    </div>
+
+    <!-- World Rankings Modal -->
+    <div id="worldRankingsModal">
+        <h6>Top 100 Scores</h6>
+        <ol id="worldRankingsList"></ol>
+        <button onclick="closeWorldRankings()">Close</button>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div class="screen" id="gameOverScreen" style="display: none;">
+        <h4>Game Over!</h4>
+        <p style="color: green;">Reached Level: <span id="finalLevel">1</span></p>
+        <p style="color: green;">Personal Best: <span id="finalHighScore">0</span></p>
+        <button id="backButton">Back to Lobby</button>
+    </div>
+
+    <script>
+        function generateStars(count) {
+            const spaceElement = document.querySelector('.space');
+            spaceElement.innerHTML = '';  
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            for (let i = 0; i < count; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * width}px`;
+                star.style.top = `${Math.random() * height}px`;
+                spaceElement.appendChild(star);
+            }
+        }
+
+        function generateRandomTime() {
+            return (Math.random() * 2.8 + 0.2).toFixed(3);
+        }
+
+        let currentLevel = 1;
+        let timer;
+        let username = 'Guest';
+        let highScore = 0;
+
+        document.getElementById('signInButton').addEventListener('click', () => {
+            const name = document.getElementById('name').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!name || !password) {
+                alert("All fields are required!");
+                return;
+            }
+
+            let storedPassword = localStorage.getItem(`password_${name}`);
+
+            if (storedPassword && storedPassword !== password) {
+                alert("Incorrect password! or change name and Try again.");
+                return;
+            }
+
+            localStorage.setItem('username', name);
+            localStorage.setItem(`password_${name}`, password);
+
+            username = name;
+            document.getElementById('playerName').textContent = username;
+            document.getElementById('signInScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        });
+
+        document.getElementById('playButton').addEventListener('click', () => {
+            highScore = parseInt(localStorage.getItem(`${username}_highScore`)) || 0;
+            document.getElementById('currentUser').textContent = username;
+            document.getElementById('highScore').textContent = highScore;
+            
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameContainer').style.display = 'block';
+            currentLevel = 1;
+            startLevel();
+        });
+
+        document.getElementById('clickButton').addEventListener('click', () => {
+            clearInterval(timer);
+            currentLevel++;
+            startLevel();
+        });
+
+        function startLevel() {
+            document.getElementById('level').textContent = currentLevel;
+            let randomTime = generateRandomTime();
+            let startTime = Date.now();
+            timer = setInterval(() => {
+                let elapsed = Date.now() - startTime;
+                let remaining = randomTime - elapsed / 1000;
+                document.getElementById('timerDisplay').textContent = remaining.toFixed(1.199);
+                if (remaining <= 0) gameOver();
+            }, 10);
+        }
+
+        function gameOver() {
+            clearInterval(timer);
+            document.getElementById('finalLevel').textContent = currentLevel;
+            document.getElementById('gameContainer').style.display = 'none';
+            document.getElementById('gameOverScreen').style.display = 'block';
+
+            let currentHighScore = currentLevel;
+            if (currentHighScore > highScore) {
+                highScore = currentHighScore;
+                localStorage.setItem(`${username}_highScore`, highScore);
+            }
+
+            document.getElementById('finalHighScore').textContent = highScore;
+            updateWorldRankings(username, currentHighScore);
+        }
+
+        document.getElementById('backButton').addEventListener('click', () => {
+            document.getElementById('gameOverScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        });
+
+        document.getElementById('viewTopScoresButton').addEventListener('click', () => {
+            showWorldRankings();
+        });
+
+        function showWorldRankings() {
+            const rankings = JSON.parse(localStorage.getItem('worldRankings')) || [];
+            const worldRankList = document.getElementById('worldRankingsList');
+            worldRankList.innerHTML = '';
+
+            rankings.sort((a, b) => b.score - a.score);
+            for (let i = 0; i < 100 && i < rankings.length; i++) {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${i + 1}/ ${rankings[i].name}: ${rankings[i].score}`;
+                worldRankList.appendChild(listItem);
+            }
+
+            document.getElementById('worldRankingsModal').style.display = 'block';
+        }
+
+        function closeWorldRankings() {
+            document.getElementById('worldRankingsModal').style.display = 'none';
+        }
+
+        function updateWorldRankings(playerName, score) {
+            let rankings = JSON.parse(localStorage.getItem('worldRankings')) || [];
+            rankings.push({ name: playerName, score });
+            localStorage.setItem('worldRankings', JSON.stringify(rankings));
+        }
+
+        // Generate particles
+        for (let i = 0; i < 50; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.top = `${Math.random() * 100}vh`;
+            particle.style.animationDelay = `${Math.random() * 3}s`;
+            document.querySelector('.particles').appendChild(particle);
+        }
+
+        // 24-hour timer for hidden text
+        let seconds = 86400;
+        const hiddenText = document.getElementById('hidden-text');
+
+        function updateTimer() {
+            if (seconds <= 0) {
+                hiddenText.style.display = 'block';
+                setTimeout(() => {
+                    hiddenText.style.display = 'none';
+                }, 30000);
+            } else {
+                seconds--;
+                setTimeout(updateTimer, 1000);
+            }
+        }
+
+        // Start timers
+        generateStars(170);
+        setTimeout(updateTimer, 1000);
+    </script>
+</body>
+</html>
